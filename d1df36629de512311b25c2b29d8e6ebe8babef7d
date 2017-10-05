@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "81c6cdf7_037817ca",
+        "filename": "ui/build/make.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-10-05T08:19:52Z",
+      "side": 1,
+      "message": ":P",
+      "revId": "d1df36629de512311b25c2b29d8e6ebe8babef7d",
+      "serverId": "44769751-fbfc-497d-9c9a-4bb318a4117c",
+      "unresolved": false
+    }
+  ]
+}
