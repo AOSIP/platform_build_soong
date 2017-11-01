@@ -1045,6 +1045,10 @@ func (c *deviceConfig) SamplingPGO() bool {
 	return Bool(c.config.productVariables.SamplingPGO)
 }
 
+func (c *deviceConfig) SpecificCameraParametersLibrary() string {
+	return String(c.config.productVariables.Aosip.Specific_camera_parameter_library)
+}
+
 // JavaCoverageEnabledForPath returns whether Java code coverage is enabled for
 // path. Coverage is enabled by default when the product variable
 // JavaCoveragePaths is empty. If JavaCoveragePaths is not empty, coverage is
