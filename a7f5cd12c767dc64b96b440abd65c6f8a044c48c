@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bb143ee0_bdcd2ed8",
+        "filename": "ui/build/paths/config.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000075
+      },
+      "writtenOn": "2020-01-16T06:16:25Z",
+      "side": 1,
+      "message": "this is meant to be sorted alphabetically",
+      "revId": "a7f5cd12c767dc64b96b440abd65c6f8a044c48c",
+      "serverId": "44769751-fbfc-497d-9c9a-4bb318a4117c",
+      "unresolved": true
+    }
+  ]
+}
