@@ -1,0 +1,203 @@
+[33mcommit fcebf1719f9179412c7c015561768728c483a7c6[m[33m ([m[1;36mHEAD[m[33m)[m
+Author: dianlujitao <dianlujitao@lineageos.org>
+Date:   Fri Sep 11 11:41:51 2020 +0800
+
+    soong: Hack to preserve aosip product variables
+    
+    Change-Id: Ice4093b86baed6974bab630f0e80f6b13a5e28f3
+
+[33mcommit c58034aa86f9379c2f1900add6a413d554ae4e12[m
+Author: Sam Mortimer <sam@mortimer.me.uk>
+Date:   Tue Sep 18 13:41:03 2018 -0700
+
+    soong sbox: Add option to allow copying all generated output
+    
+    *) Add option --copy-all-files that copies all generated output.
+    
+    *) When enabled, do not error when unexpected output files are found.
+    
+    *) For use by lineage_generator module.
+    
+    Change-Id: Ia3cd2216807f6165b23a97a001db7303f15d33e2
+
+[33mcommit dad2a1eeefaff5635b59c2eb494273cf55407f3f[m
+Author: Simon Shields <simon@lineageos.org>
+Date:   Mon Sep 4 21:09:10 2017 +1000
+
+    soong: add support for nested structs in variableProperties
+    
+    Change-Id: I0e5395ac70220f1d3a1c87c6112e33f84f526fea
+
+[33mcommit d1dff3622b12672e76901b9d7c84ffe7be721883[m
+Author: Simon Shields <simon@lineageos.org>
+Date:   Wed Aug 23 12:05:33 2017 +1000
+
+    soong: extend with aosip board flags
+    
+    Includes the following commit:
+    
+    Author: Simon Shields <simon@lineageos.org>
+    Date:   Mon Sep 4 21:09:44 2017 +1000
+    
+        soong: explicitly specify name of Aosip variables struct
+    
+        Change-Id: Ic754b8a13658ddc40620f985581bd1754b780b15
+    
+    Change-Id: If127c9da6b57340ae57e0cf725151cdcc3c82ef3
+
+[33mcommit cd830227af75e8b836e5c7cbfab410aacd30c164[m
+Author: Sam Mortimer <sam@mortimer.me.uk>
+Date:   Thu Sep 5 15:16:13 2019 -0700
+
+    soong: Add PathForSourceRelaxed
+    
+    Used by vendor/lineage generated kernel header module.
+    
+    Partial pick from:
+    Author: Sam Mortimer <sam@mortimer.me.uk>
+    Date:   Fri Aug 17 11:25:08 2018 -0700
+        soong: Add java sources overlay support
+        Change-Id: I94143febb0a8afa6a165364d36a40d5120a4e7bc
+    
+    Change-Id: I415af71458f2a7be8e256cb3c548994f09c5bebf
+
+[33mcommit f1f567c1addccdb0b7b06369b2fe329874be3d85[m
+Author: Colin Cross <ccross@android.com>
+Date:   Tue Aug 11 12:17:01 2020 -0700
+
+    Reland: Deduplicate APEX variants that would build identically
+    
+    APEX variants that share the same SDK version and updatability
+    almost always use identical command line arguments to build but
+    with different intermediates directories.  This causes unnecessary
+    build time and disk space for duplicated work.
+    
+    Deduplicate APEX variants that would build identically.  Create
+    aliases from the per-APEX variations to the new shared variations
+    so that the APEX modules can continue to depend on them via the
+    APEX name as the variation.
+    
+    This has one significant change in behavior.  Before this change,
+    if an APEX had two libraries in its direct dependencies and one
+    of those libraries depended on the other, and the second library
+    had stubs, then the first library would depend on the implementation
+    of the second library and not the stubs.  After this change, if
+    the first library is also present in a second APEX but the second
+    library is not, then the common variant shared between the two
+    APEXes would use the stubs, not the implementation.
+    
+    In a correctly configured set of build rules this change will
+    be irrelevant, because if the compilation worked for the second
+    APEX using stubs then it will work for the common variant using
+    stubs.  However, if an incorrect change to the build rules is
+    made this could lead to confusing errors, as a previously-working
+    common variant could suddenly stop building when a module is added
+    to a new APEX without its dependencies that require implementation
+    APIs to compile.
+    
+    This change reduces the number of modules in an AOSP arm64-userdebug
+    build by 3% (52242 to 50586), reduces the number of variants of the
+    libcutils module from 74 to 53, and reduces the number of variants
+    of the massive libart[d] modules from 44 to 32.
+    
+    This relands I0529837476a253c32b3dfb98dcccf107427c742c with a fix
+    to always mark permissions XML files of java_sdk_library modules as
+    unique per apex since they contain the APEX filename, and a fix
+    to UpdateUniqueApexVariationsForDeps to check ApexInfo.InApexes
+    instead of DepIsInSameApex to check if two modules are in the same
+    apex to account for a module that depends on another in a way that
+    doesn't normally include the dependency in the APEX (e.g. a libs
+    property), but the dependency is directly included in the APEX.
+    
+    Bug: 164216768
+    Test: go test ./build/soong/apex/...
+    Change-Id: I2ae170601f764e5b88d0be2e0e6adc84e3a4d9cc
+
+[33mcommit 4457c15624fa14ef0b2d6f6d3e39dafd312171e5[m
+Author: Colin Cross <ccross@android.com>
+Date:   Thu Aug 13 11:24:56 2020 -0700
+
+    Rename ApexName to ApexVariationName
+    
+    In preparation for reusing the same variation for multiple apexes,
+    rename ApexName to ApexVariationName.
+    
+    Bug: 164216768
+    Test: all soong tests
+    Change-Id: I88f2c5b192ffa27acd38e01952d0cefd413222a0
+
+[33mcommit 9ca8f7cc9f4c81de8205acf3e0869df0f219afb4[m
+Author: Colin Cross <ccross@android.com>
+Date:   Tue Aug 11 12:03:56 2020 -0700
+
+    Add CreateAliasVariation to BottomUpMutatorContext
+    
+    Propagate CreateAliasVariation from Blueprint to Soong.
+    
+    Bug: 164216768
+    Test: m checkbuild
+    Change-Id: I635bf67481092b83a8d26ef1cb06e2e3e21a595f
+
+[33mcommit 1069d6582d65d9108476153230d43e91a631e08f[m
+Author: Paul Duffin <paulduffin@google.com>
+Date:   Fri Jun 26 22:08:43 2020 +0100
+
+    Restrict replacements of source dependencies with prebuilts
+    
+    Previously, when java_sdk_library_import was preferred over a
+    java_sdk_library the latter ends up depending on the prebuilt child
+    modules created by the java_sdk_library_import instead of the source
+    child modules that it created itself. That was because all dependencies
+    on those source child modules were replaced with the corresponding
+    prebuilt child modules.
+    
+    This change prevents those dependencies from being replaced to preserve
+    the dependencies from java_sdk_library onto its source child modules by
+    making the replacement conditional depending on the tag used. It also
+    updates the affected test.
+    
+    Bug: 159902351
+    Test: m nothing
+    Change-Id: I4441b901dedfd44b9769df1ac2e248b94834cf85
+
+[33mcommit 6bde9e93c0659d4fbdfa51a114e04287e8dcc6ae[m
+Author: Paul Duffin <paulduffin@google.com>
+Date:   Fri Jun 26 20:17:02 2020 +0100
+
+    Stop java_sdk_library_import from depending on source modules
+    
+    Previously, java_sdk_library_import added the dependencies on its child
+    components in the deps mutator after prebuilts without a matching
+    source module are renamed to the source module name. That meant that
+    the java_sdk_library_import has to use the source module name and ended
+    up depending on the source module unless it was preferred.
+    
+    This change adds a new component deps mutator that runs before the
+    PrebuiltRenameMutator so that the java_sdk_library_import can add
+    dependencies onto the prebuilt modules. It also updates an affected
+    test.
+    
+    Bug: 159902351
+    Test: m nothing
+    Change-Id: I3576c4873302743e51aff547ea1497bef6d748ac
+
+[33mcommit 09a7771d81362c69864f7a6f463f69dbb404ef73[m
+Author: Paul Duffin <paulduffin@google.com>
+Date:   Fri Jun 26 22:20:25 2020 +0100
+
+    Track the current java_sdk_library(_import) deps
+    
+    Adds some tests to track the current dependencies between
+    java_sdk_library, java_sdk_library_import and their child modules in
+    various configurations. This is in preparation for a series of changes
+    that will update the dependencies to ensure that the java_sdk_library
+    always depends on the source modules that it creates and
+    java_sdk_library_import always depends on the prebuilt modules that it
+    creates.
+    
+    Comments in the tests highlight the parts that will be affected by the
+    follow up changes.
+    
+    Bug: 159902351
+    Test: m nothing
+    
